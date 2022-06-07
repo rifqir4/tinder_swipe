@@ -121,11 +121,10 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  // _controller.addData([
-                  //   "String 9",
-                  //   "String 8",
-                  // ].toList());
-                  _controller.dislike();
+                  _controller.addData([
+                    "String 9",
+                    "String 8",
+                  ].toList());
                 },
                 child: const Text("Dislike"),
               ),
@@ -137,7 +136,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  _controller.like();
+                  // _controller.like();
+                  _controller.clearData();
                 },
                 child: const Text("Like"),
               ),

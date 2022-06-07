@@ -9,7 +9,6 @@ class SwipeController extends ChangeNotifier {
   Function(CardStatus status, int length, dynamic data) callback =
       ((status, length, data) {});
 
-  int length = 0;
   CardStatus? prevStatus;
   bool canRewind = false;
 
@@ -176,4 +175,11 @@ class SwipeController extends ChangeNotifier {
     _data.insertAll(0, newData.reversed.toList());
     notifyListeners();
   }
+
+  void clearData() {
+    _data = [];
+    notifyListeners();
+  }
+
+  bool isEmpty() => _data.isEmpty;
 }

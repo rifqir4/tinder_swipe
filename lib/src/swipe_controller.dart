@@ -17,7 +17,7 @@ class SwipeController extends ChangeNotifier {
   List<dynamic> get data => _data;
 
   void initData(List<dynamic> newData) {
-    _data = newData;
+    _data = newData.reversed.toList();
   }
 
   SwipeChild? get dataSecondLast {
@@ -173,7 +173,7 @@ class SwipeController extends ChangeNotifier {
   }
 
   void addData(List<dynamic> newData) {
-    _data.insertAll(0, newData);
+    _data.insertAll(0, newData.reversed.toList());
     notifyListeners();
   }
 }

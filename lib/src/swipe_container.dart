@@ -10,11 +10,13 @@ class SwipeContainer<T> extends StatefulWidget {
     required this.builder,
     required this.data,
     this.callback,
+    this.swipingBadge,
   }) : super(key: key);
 
   final Widget Function(BuildContext context, T value, int index) builder;
   final List<T> data;
   final Function(CardStatus status, int length)? callback;
+  final Widget? Function(CardStatus status)? swipingBadge;
 
   @override
   State<SwipeContainer<T>> createState() => _SwipeContainerState<T>();
@@ -29,37 +31,6 @@ class _SwipeContainerState<T> extends State<SwipeContainer<T>> {
       context.read<SwipeController>().callback = widget.callback!;
     }
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   final data = context.select<SwipeController, List>(((value) => value.data));
-  //   return Stack(
-  //     children: [
-  //       if (data.length >= 2)
-  //         SwipeCard(
-  //           key: Key("cards-${data.length - 2}"),
-  //           isFront: false,
-  //           child: widget.builder(
-  //             context,
-  //             data[data.length - 2],
-  //             data.length - 2,
-  //           ),
-  //           text: "cards-${data.length - 2}",
-  //         ),
-  //       if (data.isNotEmpty)
-  //         SwipeCard(
-  //           key: Key("cards-${data.length - 1}"),
-  //           isFront: true,
-  //           child: widget.builder(
-  //             context,
-  //             data[data.length - 1],
-  //             data.length - 1,
-  //           ),
-  //           text: "cards-${data.length - 1}",
-  //         ),
-  //     ],
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +49,7 @@ class _SwipeContainerState<T> extends State<SwipeContainer<T>> {
                   value.index,
                 ),
                 text: "cards-${value.index}",
+                swipingBadge: widget.swipingBadge,
               );
             }
             return Container();
@@ -96,6 +68,7 @@ class _SwipeContainerState<T> extends State<SwipeContainer<T>> {
                   value.index,
                 ),
                 text: "cards-${value.index}",
+                swipingBadge: widget.swipingBadge,
               );
             }
             return Container();

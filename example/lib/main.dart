@@ -75,16 +75,43 @@ class _MyHomePageState extends State<MyHomePage> {
                 controller: _controller,
                 data: mylist,
                 builder: (context, value, index) {
-                  return Column(
-                    children: [
-                      const Text("KARTU"),
-                      Text(value),
-                    ],
+                  return Container(
+                    width: double.infinity,
+                    color: Colors.grey,
+                    child: Column(
+                      children: [
+                        const Text("KARTU"),
+                        Text(value),
+                      ],
+                    ),
                   );
                 },
                 callback: (CardStatus status, int length) {
                   print(status);
                   print(length);
+                },
+                swipingBadge: (status) {
+                  return Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: status == CardStatus.like
+                            ? Colors.green
+                            : Colors.red,
+                        width: 2,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      status == CardStatus.like ? "PAKIT" : "MONJOWW",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: status == CardStatus.like
+                            ? Colors.green
+                            : Colors.red,
+                      ),
+                    ),
+                  );
                 },
               ),
             ),

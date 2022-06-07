@@ -10,11 +10,13 @@ class SwipeCard extends StatelessWidget {
     required this.isFront,
     required this.text,
     this.child,
+    this.swipingBadge,
   }) : super(key: key);
 
   final bool isFront;
   final String text;
   final Widget? child;
+  final Widget? Function(CardStatus status)? swipingBadge;
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +73,7 @@ class SwipeCard extends StatelessWidget {
 
   Widget buildCard() {
     return Container(
+      color: child == null ? Colors.blue.shade200 : null,
       child: Center(
         child: child ?? Text(text),
       ),
@@ -84,12 +87,21 @@ class SwipeCard extends StatelessWidget {
 
     switch (status) {
       case CardStatus.like:
-        final child =
-            defaultStamp(text: "LIKE", color: Colors.green, opacity: opacity);
+        final child = defaultStamp(
+          text: "LIKE",
+          color: Colors.green,
+          opacity: opacity,
+          child: swipingBadge != null ? swipingBadge!(CardStatus.like) : null,
+        );
         return Positioned(top: 24, left: 24, child: child);
       case CardStatus.dislike:
-        final child =
-            defaultStamp(text: "NOPE", color: Colors.red, opacity: opacity);
+        final child = defaultStamp(
+          text: "NOPE",
+          color: Colors.red,
+          opacity: opacity,
+          child:
+              swipingBadge != null ? swipingBadge!(CardStatus.dislike) : null,
+        );
         return Positioned(top: 24, right: 24, child: child);
       default:
         return Container();
@@ -101,27 +113,29 @@ class SwipeCard extends StatelessWidget {
     required String text,
     required Color color,
     required double opacity,
+    Widget? child,
   }) {
     return Opacity(
       opacity: opacity,
-      child: Container(
-        margin: const EdgeInsets.all(12),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: color,
-            width: 2,
+      child: child ??
+          Container(
+            margin: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: color,
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              text,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
           ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
-        ),
-      ),
     );
   }
 }

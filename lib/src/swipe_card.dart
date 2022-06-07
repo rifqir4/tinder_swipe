@@ -71,7 +71,6 @@ class SwipeCard extends StatelessWidget {
 
   Widget buildCard() {
     return Container(
-      color: isFront ? Colors.blue.shade100 : Colors.grey.shade300,
       child: Center(
         child: child ?? Text(text),
       ),

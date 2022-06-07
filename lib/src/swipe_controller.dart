@@ -6,7 +6,8 @@ import 'package:tinder_swipe/src/swipe_child.dart';
 enum CardStatus { like, dislike, rewind, none }
 
 class SwipeController extends ChangeNotifier {
-  Function(CardStatus status, int length) callback = ((status, length) {});
+  Function(CardStatus status, int length, dynamic data) callback =
+      ((status, length, data) {});
 
   int length = 0;
   CardStatus? prevStatus;
@@ -146,7 +147,7 @@ class SwipeController extends ChangeNotifier {
       _position = const Offset(0, 0);
       canRewind = false;
       notifyListeners();
-      callback(CardStatus.rewind, _data.length);
+      callback(CardStatus.rewind, _data.length, _data.last);
     }
   }
 
@@ -160,10 +161,10 @@ class SwipeController extends ChangeNotifier {
   void _nextCard() async {
     if (_data.isEmpty) return;
     await Future.delayed(const Duration(milliseconds: 400));
-    _data.removeLast();
+    final lastData = _data.removeLast();
     notifyListeners();
     canRewind = true;
-    callback(prevStatus ?? CardStatus.none, _data.length);
+    callback(prevStatus ?? CardStatus.none, _data.length, lastData);
     resetPosition();
   }
 

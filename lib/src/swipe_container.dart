@@ -15,7 +15,7 @@ class SwipeContainer<T> extends StatefulWidget {
 
   final Widget Function(BuildContext context, T value, int index) builder;
   final List<T> data;
-  final Function(CardStatus status, int length)? callback;
+  final Function(CardStatus status, int length, dynamic data)? callback;
   final Widget? Function(CardStatus status)? swipingBadge;
 
   @override

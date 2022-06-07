@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   );
                 },
-                callback: (CardStatus status, int length) {
+                callback: (CardStatus status, int length, dynamic data) {
                   print(status);
                   print(length);
                 },

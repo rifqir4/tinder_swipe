@@ -5,28 +5,28 @@ import 'package:tinder_swipe/src/swipe_child.dart';
 
 enum CardStatus { like, dislike, rewind, none }
 
-class SwipeController extends ChangeNotifier {
-  Function(CardStatus status, int length, dynamic data) callback =
+class SwipeController<T> extends ChangeNotifier {
+  Function(CardStatus status, int length, T? data) callback =
       ((status, length, data) {});
 
   CardStatus? prevStatus;
   bool canRewind = false;
 
-  List<dynamic> _data = [];
-  List<dynamic> get data => _data;
+  List<T>? _data;
+  List<T> get data => _data ?? [];
 
-  void initData(List<dynamic> newData) {
-    _data = newData.reversed.toList();
+  void initCallback(Function(CardStatus status, int length, T? data) callback) {
+    this.callback = callback;
   }
 
   SwipeChild? get dataSecondLast {
-    if (_data.length < 2) return null;
-    return SwipeChild(index: _data.length - 2, data: _data[data.length - 2]);
+    if (data.length < 2) return null;
+    return SwipeChild(index: data.length - 2, data: data[data.length - 2]);
   }
 
   SwipeChild? get dataLast {
-    if (_data.isEmpty) return null;
-    return SwipeChild(index: _data.length - 1, data: _data[data.length - 1]);
+    if (data.isEmpty) return null;
+    return SwipeChild(index: data.length - 1, data: data[data.length - 1]);
   }
 
   bool _isAnimate = false;
@@ -131,7 +131,8 @@ class SwipeController extends ChangeNotifier {
   void rewind(dynamic prevData) async {
     if (prevStatus != null && canRewind) {
       _isDragging = true;
-      _data.add(prevData);
+      _data ??= [];
+      _data?.add(prevData);
       notifyListeners();
 
       _angle = prevStatus == CardStatus.like ? 20 : -20;
@@ -146,7 +147,7 @@ class SwipeController extends ChangeNotifier {
       _position = const Offset(0, 0);
       canRewind = false;
       notifyListeners();
-      callback(CardStatus.rewind, _data.length, _data.last);
+      callback(CardStatus.rewind, data.length, data.last);
     }
   }
 
@@ -158,12 +159,12 @@ class SwipeController extends ChangeNotifier {
   }
 
   void _nextCard() async {
-    if (_data.isEmpty) return;
+    if (data.isEmpty) return;
     await Future.delayed(const Duration(milliseconds: 400));
-    final lastData = _data.removeLast();
+    final lastData = _data?.removeLast();
     notifyListeners();
     canRewind = true;
-    callback(prevStatus ?? CardStatus.none, _data.length, lastData);
+    callback(prevStatus ?? CardStatus.none, data.length, lastData);
     resetPosition();
   }
 
@@ -171,8 +172,12 @@ class SwipeController extends ChangeNotifier {
     _screenSize = size;
   }
 
-  void addData(List<dynamic> newData) {
-    _data.insertAll(0, newData.reversed.toList());
+  void addData(List<T> newData) {
+    if (_data == null) {
+      _data = newData.reversed.toList();
+    } else {
+      _data?.insertAll(0, newData.reversed.toList());
+    }
     notifyListeners();
   }
 
@@ -181,5 +186,5 @@ class SwipeController extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool isEmpty() => _data.isEmpty;
+  bool isEmpty() => data.isEmpty;
 }

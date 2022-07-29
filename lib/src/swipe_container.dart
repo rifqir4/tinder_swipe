@@ -8,14 +8,12 @@ class SwipeContainer<T> extends StatefulWidget {
   const SwipeContainer({
     Key? key,
     required this.builder,
-    required this.data,
     this.callback,
     this.swipingBadge,
   }) : super(key: key);
 
   final Widget Function(BuildContext context, T value, int index) builder;
-  final List<T> data;
-  final Function(CardStatus status, int length, dynamic data)? callback;
+  final Function(CardStatus status, int length, T? data)? callback;
   final Widget? Function(CardStatus status)? swipingBadge;
 
   @override
@@ -26,9 +24,12 @@ class _SwipeContainerState<T> extends State<SwipeContainer<T>> {
   @override
   void initState() {
     super.initState();
-    context.read<SwipeController>().initData(widget.data);
     if (widget.callback != null) {
-      context.read<SwipeController>().callback = widget.callback!;
+      context.read<SwipeController>().initCallback(
+        (CardStatus status, int length, dynamic data) {
+          widget.callback!(status, length, data);
+        },
+      );
     }
   }
 

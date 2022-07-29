@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.all(24),
               child: TinderSwipe<String>(
                 controller: _controller,
-                data: mylist,
+                // data: mylist,
                 builder: (context, value, index) {
                   return Container(
                     width: double.infinity,
@@ -87,8 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
                 },
                 callback: (CardStatus status, int length, dynamic data) {
-                  print(status);
-                  print(length);
+                  debugPrint(status.toString());
+                  debugPrint(length.toString());
                 },
                 swipingBadge: (status) {
                   return Container(

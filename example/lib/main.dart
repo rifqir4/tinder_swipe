@@ -50,13 +50,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final SwipeController _controller = SwipeController();
+  final SwipeController<String> _controller = SwipeController<String>();
   List<String> mylist = [
     "String 1",
     "String 2",
     "String 3",
     "String 4",
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addData(mylist);
+
+    _controller.initCallback((status, length, data) {
+      debugPrint(status.toString());
+      debugPrint(length.toString());
+      debugPrint(data);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.all(24),
               child: TinderSwipe<String>(
                 controller: _controller,
-                // data: mylist,
                 builder: (context, value, index) {
                   return Container(
                     width: double.infinity,
@@ -85,10 +96,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     ),
                   );
-                },
-                callback: (CardStatus status, int length, dynamic data) {
-                  debugPrint(status.toString());
-                  debugPrint(length.toString());
                 },
                 swipingBadge: (status) {
                   return Container(
@@ -121,23 +128,19 @@ class _MyHomePageState extends State<MyHomePage> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  _controller.addData([
-                    "String 9",
-                    "String 8",
-                  ].toList());
+                  _controller.dislike();
                 },
                 child: const Text("Dislike"),
               ),
               ElevatedButton(
                 onPressed: () {
-                  _controller.rewind("String 4");
+                  _controller.rewind(prevData: "String 4");
                 },
                 child: const Text("Rewind"),
               ),
               ElevatedButton(
                 onPressed: () {
-                  // _controller.like();
-                  _controller.clearData();
+                  _controller.like();
                 },
                 child: const Text("Like"),
               ),

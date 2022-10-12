@@ -9,13 +9,11 @@ class TinderSwipe<T> extends StatelessWidget {
     Key? key,
     this.controller,
     required this.builder,
-    this.callback,
     this.swipingBadge,
   }) : super(key: key);
 
   final SwipeController? controller;
   final Widget Function(BuildContext context, T value, int index) builder;
-  final Function(CardStatus status, int length, T? data)? callback;
   final Widget? Function(CardStatus status)? swipingBadge;
 
   @override
@@ -24,7 +22,6 @@ class TinderSwipe<T> extends StatelessWidget {
       create: (_) => controller ?? SwipeController(),
       child: SwipeContainer<T>(
         builder: builder,
-        callback: callback,
         swipingBadge: swipingBadge,
       ),
     );

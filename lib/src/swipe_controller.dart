@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:tinder_swipe/src/swipe_child.dart';
 
-enum CardStatus { like, dislike, rewind, none }
+enum CardStatus { like, dislike, removed, rewind, none }
 
 class SwipeController<T> extends ChangeNotifier {
   Function(CardStatus status, int length, T? data) callback =
@@ -127,6 +127,18 @@ class SwipeController<T> extends ChangeNotifier {
 
       _nextCard();
       prevStatus = CardStatus.dislike;
+    }
+  }
+
+  void removed() {
+    if (!_isAnimate) {
+      _isAnimate = true;
+      _angle = 0;
+      _position -= Offset(0, -screenSize.height);
+      notifyListeners();
+
+      _nextCard();
+      prevStatus = CardStatus.removed;
     }
   }
 

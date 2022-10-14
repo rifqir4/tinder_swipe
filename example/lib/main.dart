@@ -134,6 +134,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ElevatedButton(
                 onPressed: () {
+                  _controller.removed();
+                },
+                child: const Text("Removed"),
+              ),
+              ElevatedButton(
+                onPressed: () {
                   _controller.rewind(prevData: "String 4");
                 },
                 child: const Text("Rewind"),

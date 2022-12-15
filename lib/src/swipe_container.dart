@@ -9,8 +9,12 @@ class SwipeContainer<T> extends StatefulWidget {
     Key? key,
     required this.builder,
     this.swipingBadge,
+    this.fullSize = false,
+    this.buildCardCustom,
   }) : super(key: key);
 
+  final bool fullSize;
+  final Widget? Function(Widget front)? buildCardCustom;
   final Widget Function(BuildContext context, T value, int index) builder;
   final Widget? Function(CardStatus status)? swipingBadge;
 
@@ -42,6 +46,8 @@ class _SwipeContainerState<T> extends State<SwipeContainer<T>> {
                 ),
                 text: "cards-${value.index}",
                 swipingBadge: widget.swipingBadge,
+                fullSize: widget.fullSize,
+                buildCardCustom: widget.buildCardCustom,
               );
             }
             return Container();
@@ -61,6 +67,8 @@ class _SwipeContainerState<T> extends State<SwipeContainer<T>> {
                 ),
                 text: "cards-${value.index}",
                 swipingBadge: widget.swipingBadge,
+                fullSize: widget.fullSize,
+                buildCardCustom: widget.buildCardCustom,
               );
             }
             return Container();

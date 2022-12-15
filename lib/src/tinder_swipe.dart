@@ -10,8 +10,12 @@ class TinderSwipe<T> extends StatelessWidget {
     this.controller,
     required this.builder,
     this.swipingBadge,
+    this.fullSize = false,
+    this.buildCardCustom,
   }) : super(key: key);
 
+  final bool fullSize;
+  final Widget? Function(Widget front)? buildCardCustom;
   final SwipeController? controller;
   final Widget Function(BuildContext context, T value, int index) builder;
   final Widget? Function(CardStatus status)? swipingBadge;
@@ -23,6 +27,8 @@ class TinderSwipe<T> extends StatelessWidget {
       child: SwipeContainer<T>(
         builder: builder,
         swipingBadge: swipingBadge,
+        fullSize: fullSize,
+        buildCardCustom: buildCardCustom,
       ),
     );
   }

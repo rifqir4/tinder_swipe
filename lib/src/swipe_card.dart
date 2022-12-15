@@ -12,6 +12,7 @@ class SwipeCard extends StatelessWidget {
     this.child,
     this.swipingBadge,
     this.fullSize = false,
+    this.buildCardCustom,
   }) : super(key: key);
 
   final bool fullSize;

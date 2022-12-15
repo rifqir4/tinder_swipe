@@ -11,8 +11,11 @@ class SwipeCard extends StatelessWidget {
     required this.text,
     this.child,
     this.swipingBadge,
+    this.fullSize = false,
   }) : super(key: key);
 
+  final bool fullSize;
+  final Widget? Function(Widget front)? buildCardCustom;
   final bool isFront;
   final String text;
   final Widget? child;
@@ -23,7 +26,9 @@ class SwipeCard extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     context.read<SwipeController>().setScreenSize(size);
     return SizedBox.expand(
-        child: isFront ? buildCardFront(context) : buildCard());
+        child: isFront
+            ? buildCardFront(context)
+            : (buildCardCustom?.call(buildCard()) ?? buildCard()));
   }
 
   Widget buildCardFront(BuildContext context) {
@@ -93,7 +98,7 @@ class SwipeCard extends StatelessWidget {
           opacity: opacity,
           child: swipingBadge != null ? swipingBadge!(CardStatus.like) : null,
         );
-        return Positioned(top: 24, left: 24, child: child);
+        return fullSize ? child : Positioned(top: 24, left: 24, child: child);
       case CardStatus.dislike:
         final child = defaultStamp(
           text: "NOPE",
@@ -102,7 +107,7 @@ class SwipeCard extends StatelessWidget {
           child:
               swipingBadge != null ? swipingBadge!(CardStatus.dislike) : null,
         );
-        return Positioned(top: 24, right: 24, child: child);
+        return fullSize ? child : Positioned(top: 24, right: 24, child: child);
       default:
         return Container();
     }

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tinder_swipe/src/swipe_child.dart';
 
@@ -201,5 +202,11 @@ class TinderSwipeController<T> extends ChangeNotifier {
 
   void setCanSwipe({dynamic canSwipe}) {
     _canSwipe = canSwipe as bool Function(T card)?;
+  }
+
+  @override
+  void dispose() {
+    if (kDebugMode) debugPrint("TinderSwipeController dispose");
+    super.dispose();
   }
 }

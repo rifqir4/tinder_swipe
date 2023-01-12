@@ -5,12 +5,15 @@ import 'package:tinder_swipe/src/swipe_child.dart';
 
 enum CardStatus { like, dislike, removed, rewind, none }
 
-class SwipeController<T> extends ChangeNotifier {
+class TinderSwipeController<T> extends ChangeNotifier {
   Function(CardStatus status, int length, T? data) callback =
       ((status, length, data) {});
   void initCallback(Function(CardStatus status, int length, T? data) callback) {
     this.callback = callback;
   }
+
+  bool? Function(T card)? _canSwipe;
+  bool get canSwipe => _canSwipe?.call(dataLast?.data) ?? true;
 
   CardStatus? prevStatus;
 
@@ -107,7 +110,7 @@ class SwipeController<T> extends ChangeNotifier {
   }
 
   void like() {
-    if (!_isAnimate) {
+    if (!_isAnimate && (_canSwipe?.call(dataLast!.data) ?? true)) {
       _isAnimate = true;
       _angle = 20;
       _position += Offset(screenSize.width * 1.5, 0);
@@ -119,7 +122,7 @@ class SwipeController<T> extends ChangeNotifier {
   }
 
   void dislike() {
-    if (!_isAnimate) {
+    if (!_isAnimate && (_canSwipe?.call(dataLast!.data) ?? true)) {
       _isAnimate = true;
       _angle = -20;
       _position -= Offset(screenSize.width * 1.5, 0);
@@ -130,8 +133,8 @@ class SwipeController<T> extends ChangeNotifier {
     }
   }
 
-  void removed() {
-    if (!_isAnimate) {
+  void removed({bool force = false}) {
+    if (!_isAnimate || force) {
       _isAnimate = true;
       _angle = 0;
       _position -= Offset(0, -screenSize.height);
@@ -194,5 +197,9 @@ class SwipeController<T> extends ChangeNotifier {
   void clearData() {
     _data = [];
     notifyListeners();
+  }
+
+  void setCanSwipe({dynamic canSwipe}) {
+    _canSwipe = canSwipe as bool Function(T card)?;
   }
 }

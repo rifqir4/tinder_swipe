@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tinder_swipe/tinder_swipe.dart';
+// ignore: implementation_imports
+import 'package:tinder_swipe/src/swipe_child.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,7 +52,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final SwipeController<String> _controller = SwipeController<String>();
+  final TinderSwipeController<String> _controller =
+      TinderSwipeController<String>();
   List<String> mylist = [
     "String 1",
     "String 2",
@@ -83,42 +86,60 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(24),
-              child: TinderSwipe<String>(
-                controller: _controller,
-                builder: (context, value, index) {
-                  return Container(
-                    width: double.infinity,
-                    color: Colors.grey,
-                    child: Column(
-                      children: [
-                        const Text("KARTU"),
-                        Text(value),
-                      ],
-                    ),
+              child: Builder(
+                builder: (_) {
+                  final tinder = TinderSwipe<String>(
+                    controller: _controller,
+                    builder: (context, value, index) {
+                      return Container(
+                        width: double.infinity,
+                        color: Colors.grey,
+                        child: Column(
+                          children: [
+                            const Text("KARTU"),
+                            Text(value),
+                          ],
+                        ),
+                      );
+                    },
+                    enableCardSwipe: (value) {
+                      if (value == 'String 2') return false;
+                      return true;
+                    },
+                    swipingBadge: (status, data) {
+                      var dataString =
+                          status == CardStatus.like ? "PAKIT" : "MONJOWW";
+                      debugPrint('data ${[status, data]}');
+                      if (data is SwipeChild) {
+                        dataString = '${[data.index, data.data]}';
+                        if (data.data == 'String 2') return Container();
+                      }
+
+                      return Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: status == CardStatus.like
+                                ? Colors.green
+                                : Colors.red,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          dataString,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: status == CardStatus.like
+                                ? Colors.green
+                                : Colors.red,
+                          ),
+                        ),
+                      );
+                    },
                   );
-                },
-                swipingBadge: (status) {
-                  return Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: status == CardStatus.like
-                            ? Colors.green
-                            : Colors.red,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      status == CardStatus.like ? "PAKIT" : "MONJOWW",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: status == CardStatus.like
-                            ? Colors.green
-                            : Colors.red,
-                      ),
-                    ),
-                  );
+
+                  return tinder;
                 },
               ),
             ),
@@ -134,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  _controller.removed();
+                  _controller.removed(force: true);
                 },
                 child: const Text("Removed"),
               ),

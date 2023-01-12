@@ -11,12 +11,14 @@ class SwipeContainer<T> extends StatefulWidget {
     this.swipingBadge,
     this.fullSize = false,
     this.buildCardCustom,
+    this.enableCardSwipe,
   }) : super(key: key);
 
   final bool fullSize;
   final Widget? Function(Widget front)? buildCardCustom;
   final Widget Function(BuildContext context, T value, int index) builder;
-  final Widget? Function(CardStatus status)? swipingBadge;
+  final Widget? Function(CardStatus status, dynamic card)? swipingBadge;
+  final bool Function(T card)? enableCardSwipe;
 
   @override
   State<SwipeContainer<T>> createState() => _SwipeContainerState<T>();
@@ -32,7 +34,7 @@ class _SwipeContainerState<T> extends State<SwipeContainer<T>> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Selector<SwipeController, SwipeChild?>(
+        Selector<TinderSwipeController, SwipeChild?>(
           selector: (_, provider) => provider.dataSecondLast,
           builder: (_, value, __) {
             if (value != null) {
@@ -48,18 +50,20 @@ class _SwipeContainerState<T> extends State<SwipeContainer<T>> {
                 swipingBadge: widget.swipingBadge,
                 fullSize: widget.fullSize,
                 buildCardCustom: widget.buildCardCustom,
+                // notFirst: true,
               );
             }
             return Container();
           },
         ),
-        Selector<SwipeController, SwipeChild?>(
+        Selector<TinderSwipeController, SwipeChild?>(
           selector: (_, provider) => provider.dataLast,
           builder: (_, value, __) {
             if (value != null) {
               return SwipeCard(
                 key: Key("cards-${value.index}"),
                 isFront: true,
+                // isFront: widget.canSwipe?.call(value.data) ?? true,
                 child: widget.builder(
                   context,
                   value.data,

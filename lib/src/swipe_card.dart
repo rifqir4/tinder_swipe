@@ -13,6 +13,7 @@ class SwipeCard extends StatelessWidget {
     this.swipingBadge,
     this.fullSize = false,
     this.buildCardCustom,
+    this.notFirst = false,
   }) : super(key: key);
 
   final bool fullSize;
@@ -20,12 +21,13 @@ class SwipeCard extends StatelessWidget {
   final bool isFront;
   final String text;
   final Widget? child;
-  final Widget? Function(CardStatus status)? swipingBadge;
+  final Widget? Function(CardStatus status, dynamic card)? swipingBadge;
+  final bool notFirst;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    context.read<SwipeController>().setScreenSize(size);
+    context.read<TinderSwipeController>().setScreenSize(size);
     return SizedBox.expand(
         child: isFront
             ? buildCardFront(context)
@@ -33,47 +35,54 @@ class SwipeCard extends StatelessWidget {
   }
 
   Widget buildCardFront(BuildContext context) {
+    final controller = context.read<TinderSwipeController>();
+    final cardBuilder = LayoutBuilder(
+      builder: (context, constraints) {
+        return Consumer<TinderSwipeController>(
+          builder: (context, provider, child) {
+            final position = provider.position;
+            final milliseconds = provider.isDragging ? 0 : 400;
+
+            final center = constraints.smallest.center(Offset.zero);
+            final angle = provider.angle * pi / 180;
+            final rotatedMatrix = Matrix4.identity()
+              ..translate(center.dx, center.dy)
+              ..rotateZ(angle)
+              ..translate(-center.dx, -center.dy);
+            return AnimatedContainer(
+                curve: Curves.fastOutSlowIn,
+                duration: Duration(milliseconds: milliseconds),
+                transform: rotatedMatrix..translate(position.dx, position.dy),
+                child: child);
+          },
+          child: Stack(
+            children: [
+              buildCard(),
+              buildStamps(context),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (controller.canSwipe == false) {
+      return cardBuilder;
+    }
+
     return GestureDetector(
       onPanStart: (details) {
-        final _controller = context.read<SwipeController>();
+        final _controller = context.read<TinderSwipeController>();
         _controller.startPosition(details);
       },
       onPanUpdate: (details) {
-        final _controller = context.read<SwipeController>();
+        final _controller = context.read<TinderSwipeController>();
         _controller.updatePoisiton(details);
       },
       onPanEnd: (_) {
-        final _controller = context.read<SwipeController>();
+        final _controller = context.read<TinderSwipeController>();
         _controller.endPosition();
       },
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Consumer<SwipeController>(
-            builder: (context, provider, child) {
-              final position = provider.position;
-              final milliseconds = provider.isDragging ? 0 : 400;
-
-              final center = constraints.smallest.center(Offset.zero);
-              final angle = provider.angle * pi / 180;
-              final rotatedMatrix = Matrix4.identity()
-                ..translate(center.dx, center.dy)
-                ..rotateZ(angle)
-                ..translate(-center.dx, -center.dy);
-              return AnimatedContainer(
-                  curve: Curves.fastOutSlowIn,
-                  duration: Duration(milliseconds: milliseconds),
-                  transform: rotatedMatrix..translate(position.dx, position.dy),
-                  child: child);
-            },
-            child: Stack(
-              children: [
-                buildCard(),
-                buildStamps(context),
-              ],
-            ),
-          );
-        },
-      ),
+      child: cardBuilder,
     );
   }
 
@@ -84,10 +93,38 @@ class SwipeCard extends StatelessWidget {
         child: child ?? Text(text),
       ),
     );
+/*
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Consumer<TinderSwipeController>(
+          builder: (context, provider, child) {
+            if (isFront) return child!;
+            if (notFirst) return child!;
+
+            final position = provider.position;
+            final milliseconds = provider.isDragging ? 0 : 400;
+
+            final center = constraints.smallest.center(Offset.zero);
+            final angle = provider.angle * pi / 180;
+            final rotatedMatrix = Matrix4.identity()
+              ..translate(center.dx, center.dy)
+              ..rotateZ(angle)
+              ..translate(-center.dx, -center.dy);
+            return AnimatedContainer(
+                curve: Curves.fastOutSlowIn,
+                duration: Duration(milliseconds: milliseconds),
+                transform: rotatedMatrix..translate(position.dx, position.dy),
+                child: child);
+          },
+          child: cardView,
+        );
+      },
+    );
+*/
   }
 
   Widget buildStamps(BuildContext context) {
-    final provider = context.watch<SwipeController>();
+    final provider = context.watch<TinderSwipeController>();
     final status = provider.getStatus(isForce: false);
     final opacity = provider.getStatusOpacity();
 
@@ -97,7 +134,9 @@ class SwipeCard extends StatelessWidget {
           text: "LIKE",
           color: Colors.green,
           opacity: opacity,
-          child: swipingBadge != null ? swipingBadge!(CardStatus.like) : null,
+          child: swipingBadge != null
+              ? swipingBadge!(CardStatus.like, provider.dataLast)
+              : null,
         );
         return fullSize ? child : Positioned(top: 24, left: 24, child: child);
       case CardStatus.dislike:
@@ -105,8 +144,9 @@ class SwipeCard extends StatelessWidget {
           text: "NOPE",
           color: Colors.red,
           opacity: opacity,
-          child:
-              swipingBadge != null ? swipingBadge!(CardStatus.dislike) : null,
+          child: swipingBadge != null
+              ? swipingBadge!(CardStatus.dislike, provider.dataLast)
+              : null,
         );
         return fullSize ? child : Positioned(top: 24, right: 24, child: child);
       default:

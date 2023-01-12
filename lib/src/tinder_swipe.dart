@@ -12,23 +12,27 @@ class TinderSwipe<T> extends StatelessWidget {
     this.swipingBadge,
     this.fullSize = false,
     this.buildCardCustom,
+    this.enableCardSwipe,
   }) : super(key: key);
 
   final bool fullSize;
   final Widget? Function(Widget front)? buildCardCustom;
-  final SwipeController? controller;
+  final TinderSwipeController? controller;
   final Widget Function(BuildContext context, T value, int index) builder;
-  final Widget? Function(CardStatus status)? swipingBadge;
+  final Widget? Function(CardStatus status, dynamic card)? swipingBadge;
+  final bool Function(T card)? enableCardSwipe;
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<SwipeController>(
-      create: (_) => controller ?? SwipeController(),
+    return ChangeNotifierProvider<TinderSwipeController>.value(
+      value: (controller ?? TinderSwipeController<T>())
+        ..setCanSwipe(canSwipe: enableCardSwipe),
       child: SwipeContainer<T>(
         builder: builder,
         swipingBadge: swipingBadge,
         fullSize: fullSize,
         buildCardCustom: buildCardCustom,
+        enableCardSwipe: enableCardSwipe,
       ),
     );
   }

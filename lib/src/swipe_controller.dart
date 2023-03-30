@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:tinder_swipe/src/swipe_child.dart';
 
-enum CardStatus { like, dislike, removed, rewind, none }
+enum CardStatus { like, dislike, removed, rewind, superLike, none }
 
 class TinderSwipeController<T> extends ChangeNotifier {
   Function(CardStatus status, int length, T? data) callback =
@@ -122,6 +122,18 @@ class TinderSwipeController<T> extends ChangeNotifier {
     }
   }
 
+  void superLike({bool force = false}) {
+    if ((!_isAnimate && (_canSwipe?.call(dataLast!.data) ?? true)) || force) {
+      _isAnimate = true;
+      _angle = 0;
+      _position -= Offset(0, screenSize.height);
+      notifyListeners();
+
+      _nextCard();
+      prevStatus = CardStatus.superLike;
+    }
+  }
+
   void dislike() {
     if (!_isAnimate && (_canSwipe?.call(dataLast!.data) ?? true)) {
       _isAnimate = true;
@@ -161,10 +173,16 @@ class TinderSwipeController<T> extends ChangeNotifier {
     notifyListeners();
 
     final directionStatus = fromStatus ?? prevStatus;
-    _angle = directionStatus == CardStatus.like ? 20 : -20;
-    _position = directionStatus == CardStatus.like
-        ? Offset(screenSize.width * 1.5, 0)
-        : Offset(-screenSize.width * 1.5, 0);
+    if (directionStatus == CardStatus.superLike) {
+      _angle = 0;
+      _position = Offset(0, -screenSize.height);
+      // _position = Offset(0, 0);
+    } else {
+      _angle = directionStatus == CardStatus.like ? 20 : -20;
+      _position = directionStatus == CardStatus.like
+          ? Offset(screenSize.width * 1.5, 0)
+          : Offset(-screenSize.width * 1.5, 0);
+    }
     notifyListeners();
 
     await Future.delayed(const Duration(milliseconds: 200));

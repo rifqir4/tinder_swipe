@@ -18,7 +18,8 @@ class TinderSwipe<T> extends StatelessWidget {
   final bool fullSize;
   final Widget? Function(Widget front)? buildCardCustom;
   final TinderSwipeController? controller;
-  final Widget Function(BuildContext context, T value, int index) builder;
+  final Widget Function(BuildContext context, T value, int index, bool isFront)
+      builder;
   final Widget? Function(CardStatus status, dynamic card)? swipingBadge;
   final bool Function(T card)? enableCardSwipe;
 

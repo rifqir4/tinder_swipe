@@ -90,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 builder: (_) {
                   final tinder = TinderSwipe<String>(
                     controller: _controller,
-                    builder: (context, value, index) {
+                    builder: (context, value, index, isFront) {
                       return Container(
                         width: double.infinity,
                         color: Colors.grey,

@@ -16,7 +16,8 @@ class SwipeContainer<T> extends StatefulWidget {
 
   final bool fullSize;
   final Widget? Function(Widget front)? buildCardCustom;
-  final Widget Function(BuildContext context, T value, int index) builder;
+  final Widget Function(BuildContext context, T value, int index, bool isFront)
+      builder;
   final Widget? Function(CardStatus status, dynamic card)? swipingBadge;
   final bool Function(T card)? enableCardSwipe;
 
@@ -45,6 +46,7 @@ class _SwipeContainerState<T> extends State<SwipeContainer<T>> {
                   context,
                   value.data,
                   value.index,
+                  false,
                 ),
                 text: "cards-${value.index}",
                 swipingBadge: widget.swipingBadge,
@@ -68,6 +70,7 @@ class _SwipeContainerState<T> extends State<SwipeContainer<T>> {
                   context,
                   value.data,
                   value.index,
+                  true,
                 ),
                 text: "cards-${value.index}",
                 swipingBadge: widget.swipingBadge,

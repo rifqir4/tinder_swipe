@@ -53,7 +53,8 @@ class TinderSwipeController<T> extends ChangeNotifier {
   }
 
   void updatePoisiton(DragUpdateDetails details) {
-    _position += details.delta;
+    final delta = details.delta;
+    _position += Offset(delta.dx, 0);
 
     final x = _position.dx;
     _angle = 45 * x / _screenSize.width;

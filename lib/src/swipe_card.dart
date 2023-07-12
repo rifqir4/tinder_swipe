@@ -41,7 +41,7 @@ class SwipeCard extends StatelessWidget {
         return Consumer<TinderSwipeController>(
           builder: (context, provider, child) {
             final position = provider.position;
-            final milliseconds = provider.isDragging ? 0 : 1000;
+            final milliseconds = provider.isDragging ? 0 : 400;
 
             final center = constraints.smallest.center(Offset.zero);
             final angle = provider.angle * pi / 180;

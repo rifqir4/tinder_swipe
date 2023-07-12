@@ -36,6 +36,7 @@ class TinderSwipeController<T> extends ChangeNotifier {
   //START: ANIMATION PART
   bool _isAnimate = false;
   bool get isAnimateBackCardDrag => !_isAnimate && _isDragging;
+  bool get isAnimateBackCardAnim => _isAnimate && !_isDragging;
   bool get isAnimateBackCard => _isAnimate || _isDragging;
 
   Offset _position = Offset.zero;
@@ -188,7 +189,7 @@ class TinderSwipeController<T> extends ChangeNotifier {
     }
     notifyListeners();
 
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future.delayed(const Duration(milliseconds: 400));
     _isDragging = false;
     _angle = 0;
     _position = const Offset(0, 0);

@@ -89,38 +89,32 @@ class SwipeCard extends StatelessWidget {
   Widget buildCard() {
     return Container(
       color: child == null ? Colors.blue.shade200 : null,
-      child: Center(
-        child: child ?? Text(text),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Consumer<TinderSwipeController>(
+            builder: (_, provider, __) {
+              final milliseconds = provider.isAnimateBackCardDrag ? 0 : 400;
+              var angle = provider.angle * pi / 180;
+              angle = angle.abs() > 1.0 ? 1.0 : angle;
+              var scale = 1.0;
+              if (provider.isAnimateBackCard && !isFront) {
+                scale += angle.abs() / 5;
+              }
+              final scaleMatrix = Matrix4.identity()
+                ..setIdentity()
+                ..scale(scale, scale)
+                ..translate(0.0, -8.0 * angle);
+              return AnimatedContainer(
+                  curve: Curves.fastOutSlowIn,
+                  duration: Duration(milliseconds: milliseconds),
+                  transform: scaleMatrix,
+                  transformAlignment: Alignment.bottomCenter,
+                  child: child);
+            },
+          );
+        },
       ),
     );
-/*
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Consumer<TinderSwipeController>(
-          builder: (context, provider, child) {
-            if (isFront) return child!;
-            if (notFirst) return child!;
-
-            final position = provider.position;
-            final milliseconds = provider.isDragging ? 0 : 400;
-
-            final center = constraints.smallest.center(Offset.zero);
-            final angle = provider.angle * pi / 180;
-            final rotatedMatrix = Matrix4.identity()
-              ..translate(center.dx, center.dy)
-              ..rotateZ(angle)
-              ..translate(-center.dx, -center.dy);
-            return AnimatedContainer(
-                curve: Curves.fastOutSlowIn,
-                duration: Duration(milliseconds: milliseconds),
-                transform: rotatedMatrix..translate(position.dx, position.dy),
-                child: child);
-          },
-          child: cardView,
-        );
-      },
-    );
-*/
   }
 
   Widget buildStamps(BuildContext context) {

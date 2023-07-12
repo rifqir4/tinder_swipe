@@ -35,6 +35,8 @@ class TinderSwipeController<T> extends ChangeNotifier {
 
   //START: ANIMATION PART
   bool _isAnimate = false;
+  bool get isAnimateBackCardDrag => !_isAnimate && _isDragging;
+  bool get isAnimateBackCard => _isAnimate || _isDragging;
 
   Offset _position = Offset.zero;
   Offset get position => _position;

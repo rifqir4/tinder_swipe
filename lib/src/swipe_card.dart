@@ -99,8 +99,8 @@ class SwipeCard extends StatelessWidget {
               var newScale = 0.0;
               if (provider.isAnimateBackCard && !isFront) {
                 newScale = angle.abs() / 10;
-                newScale = newScale > 0.13 ? 0.13 : newScale;
-                if (provider.isAnimateBackCardAnim) newScale = 0.13;
+                newScale = newScale > 0.11 ? 0.11 : newScale;
+                if (provider.isAnimateBackCardAnim) newScale = 0.11;
                 scale += newScale;
               }
               final scaleMatrix = Matrix4.identity()
@@ -108,7 +108,7 @@ class SwipeCard extends StatelessWidget {
                 ..scale(scale, scale)
                 ..translate(0.0, -7.0 * newScale * 10);
               return AnimatedContainer(
-                  curve: Curves.fastOutSlowIn,
+                  curve: Curves.easeInOutBack,
                   duration: Duration(milliseconds: milliseconds),
                   transform: scaleMatrix,
                   transformAlignment: Alignment.bottomCenter,

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tinder_swipe/src/swipe_const.dart';
 import 'package:tinder_swipe/src/swipe_controller.dart';
 
 class SwipeCard extends StatelessWidget {
@@ -41,14 +42,14 @@ class SwipeCard extends StatelessWidget {
         return Consumer<TinderSwipeController>(
           builder: (context, provider, child) {
             final position = provider.position;
-            final milliseconds = provider.isDragging ? 0 : 400;
+            final milliseconds = provider.isDragging ? 0 : animFront;
 
             final center = constraints.smallest.center(Offset.zero);
             final angle = provider.angle * pi / 180;
-            final rotatedMatrix = Matrix4.identity()
-              ..translate(center.dx, center.dy)
-              ..rotateZ(angle)
-              ..translate(-center.dx, -center.dy);
+            final rotatedMatrix = Matrix4.identity();
+            rotatedMatrix.translate(center.dx, 2 * center.dy);
+            rotatedMatrix.rotateZ(angle);
+            rotatedMatrix.translate(-center.dx, 2 * -center.dy);
             return AnimatedContainer(
                 curve: Curves.fastOutSlowIn,
                 duration: Duration(milliseconds: milliseconds),
@@ -93,25 +94,23 @@ class SwipeCard extends StatelessWidget {
         builder: (context, constraints) {
           return Consumer<TinderSwipeController>(
             builder: (_, provider, __) {
-              final milliseconds = provider.isAnimateBackCardDrag ? 0 : 400;
-              var angle = provider.angle * pi / 180;
+              final milliseconds =
+                  provider.isAnimateBackCardDrag ? 0 : animBack;
               var scale = 1.0;
-              var newScale = 0.0;
               if (provider.isAnimateBackCard && !isFront) {
-                newScale = angle.abs() / 10;
+                var newScale = provider.angle.abs() / 40;
                 newScale = newScale > 0.11 ? 0.11 : newScale;
                 if (provider.isAnimateBackCardAnim) newScale = 0.11;
                 scale += newScale;
               }
               final scaleMatrix = Matrix4.identity()
                 ..setIdentity()
-                ..scale(scale, scale)
-                ..translate(0.0, -7.0 * newScale * 10);
+                ..scale(scale, scale);
               return AnimatedContainer(
                   curve: Curves.easeInOutBack,
                   duration: Duration(milliseconds: milliseconds),
                   transform: scaleMatrix,
-                  transformAlignment: Alignment.bottomCenter,
+                  transformAlignment: Alignment.center,
                   child: child);
             },
           );

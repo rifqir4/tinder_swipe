@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:tinder_swipe/src/swipe_child.dart';
+import 'package:tinder_swipe/src/swipe_const.dart';
 
 enum CardStatus { like, dislike, removed, rewind, superLike, none }
 
@@ -60,7 +61,7 @@ class TinderSwipeController<T> extends ChangeNotifier {
     _position += Offset(delta.dx, 0);
 
     final x = _position.dx;
-    _angle = 45 * x / _screenSize.width;
+    _angle = angleCard * x / _screenSize.width;
 
     notifyListeners();
   }
@@ -117,7 +118,7 @@ class TinderSwipeController<T> extends ChangeNotifier {
   void like() {
     if (!_isAnimate && (_canSwipe?.call(dataLast!.data) ?? true)) {
       _isAnimate = true;
-      _angle = 20;
+      _angle = angleCard;
       _position += Offset(screenSize.width * 1.5, 0);
       notifyListeners();
 
@@ -141,7 +142,7 @@ class TinderSwipeController<T> extends ChangeNotifier {
   void dislike() {
     if (!_isAnimate && (_canSwipe?.call(dataLast!.data) ?? true)) {
       _isAnimate = true;
-      _angle = -20;
+      _angle = -angleCard;
       _position -= Offset(screenSize.width * 1.5, 0);
       notifyListeners();
 
@@ -164,7 +165,7 @@ class TinderSwipeController<T> extends ChangeNotifier {
 
   void _nextCard() async {
     if (data.isEmpty) return;
-    await Future.delayed(const Duration(milliseconds: 400));
+    await Future.delayed(const Duration(milliseconds: animFront));
     final lastData = _data.removeLast();
     notifyListeners();
     callback(prevStatus ?? CardStatus.none, data.length, lastData);
@@ -189,7 +190,7 @@ class TinderSwipeController<T> extends ChangeNotifier {
     }
     notifyListeners();
 
-    await Future.delayed(const Duration(milliseconds: 400));
+    await Future.delayed(const Duration(milliseconds: animFront));
     _isDragging = false;
     _angle = 0;
     _position = const Offset(0, 0);
